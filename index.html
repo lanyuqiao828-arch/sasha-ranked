@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sasha Ranked - Alexandra Trusova Fan Challenge</title>
+  <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    const QUESTIONS = [
+      { id: 1, category: "入门", difficulty: "Easy", question: "特鲁索娃本赛季自由滑采用哪部美剧的音乐？", options: ["《星期三》（Wednesday）", "《怪奇物语》（Stranger Things）", "《老友记》（Friends）", "《王冠》（The Crown）"], correctAnswer: 1, points: 10 },
+      { id: 2, category: "入门", difficulty: "Easy", question: "特鲁索娃的《Love Story》节目一共使用过几套不同的考斯藤？", options: ["1 套", "2 套", "3 套", "4 套"], correctAnswer: 1, points: 10 },
+      { id: 3, category: "基础技术", difficulty: "Easy", question: "花样滑冰中的 4Lz 指的是什么跳跃？", options: ["四周勾手跳（Quad Lutz）", "四周后外点冰跳（Quad Toe Loop）", "四周后内结环跳（Quad Salchow）", "四周后外结环跳（Quad Loop）"], correctAnswer: 0, points: 10 },
+      { id: 4, category: "节目考斯藤", difficulty: "Medium", question: "特鲁索娃的《Frida》节目考斯藤主色是什么？", options: ["红色", "蓝色", "白色", "粉色"], correctAnswer: 0, points: 10 },
+      { id: 5, category: "节目考斯藤", difficulty: "Medium", question: "特鲁索娃的《Game of Thrones》（《权力的游戏》）自由滑考斯藤主色是什么？", options: ["蓝色", "白色", "灰色", "粉色"], correctAnswer: 0, points: 10 },
+      { id: 6, category: "资深粉丝题", difficulty: "Medium", question: "特鲁索娃在全俄锦标赛和全俄测试赛表演《Cruella》自由滑时，穿的是同一件考斯藤吗？", options: ["是", "不是"], correctAnswer: 1, points: 10 },
+      { id: 7, category: "技术细节", difficulty: "Hard", question: "特鲁索娃在木下杯短节目中，四项非跳跃动作的定级分别是多少？", options: ["3、3、3、3", "4、3、4、3", "4、4、4、4", "4、4、3、3"], correctAnswer: 2, points: 10 },
+      { id: 8, category: "赛事技术细节", difficulty: "Hard", question: "特鲁索娃在丹尼斯·谭纪念挑战赛（谭杯）自由滑中，开场完成的四周跳是什么？", options: ["4T", "4S", "4F", "4Lz"], correctAnswer: 3, points: 10 },
+      { id: 9, category: "教练组与粉丝文化", difficulty: "Medium", question: "以下哪一组全是特鲁索娃教练组相关的中文昵称？", options: ["面姐、大叔、蛋大师、勺姐", "面姐、糯米秋、勺姐、马里宁", "大叔、冰王子、蛋大师、糯米秋", "勺姐、马里宁、面姐、羽生结弦"], correctAnswer: 0, points: 10 },
+      { id: 10, category: "花滑选手关系", difficulty: "Medium", question: "伊利亚·马里宁（Ilia Malinin）最喜欢的女子单人滑选手是谁？", options: ["安娜·谢尔巴科娃（Anna Shcherbakova）", "亚历山德拉·特鲁索娃（Alexandra Trusova）", "卡米拉·瓦利耶娃（Kamila Valieva）", "阿莉莎·刘（Alysa Liu）"], correctAnswer: 1, points: 10 },
+      { id: 11, category: "高阶技术", difficulty: "Hard", question: "特鲁索娃曾在训练中跳出来、但从未在正式比赛中展示过的跳跃是什么？", options: ["3A", "4Lo", "4F", "4S"], correctAnswer: 1, points: 10 },
+      { id: 12, category: "中国行程", difficulty: "Medium", question: "截至深圳站之前，特鲁索娃一共来过中国几次？", options: ["1 次", "2 次", "3 次", "4 次"], correctAnswer: 1, points: 10 },
+      { id: 13, category: "花滑历史与名场面", difficulty: "Hard", question: "特鲁索娃在什么时候模仿过羽生结弦的吻冰动作？", options: ["《Unstoppable》表演滑时期", "甜豆莎时期", "北京冬奥会后的红发时期", "复出后的金发时期"], correctAnswer: 2, points: 10 },
+      { id: 14, category: "选手互动", difficulty: "Medium", question: "陈巍（Nathan Chen）曾在 Instagram 上让特鲁索娃教他什么？", options: ["蟹步", "贝尔曼", "四周跳", "养狗"], correctAnswer: 2, points: 10 },
+      { id: 15, category: "最终挑战", difficulty: "Expert", question: "按照本题库设定，糯米秋的偶像是谁？", options: ["安娜·谢尔巴科娃（Anna Shcherbakova）", "亚历山德拉·特鲁索娃（Alexandra Trusova）", "羽生结弦（Yuzuru Hanyu）", "伊利亚·马里宁（Ilia Malinin）"], correctAnswer: 1, points: 10 }
+    ];
+
+    const RANKS = [
+      { name: "Bronze", minRP: 0, maxRP: 30, desc: "入门粉丝" },
+      { name: "Silver", minRP: 40, maxRP: 50, desc: "初级粉丝" },
+      { name: "Gold", minRP: 60, maxRP: 70, desc: "资深粉丝" },
+      { name: "Platinum", minRP: 80, maxRP: 90, desc: "硬核粉丝" },
+      { name: "Diamond", minRP: 100, maxRP: 110, desc: "技术专家" },
+      { name: "Master", minRP: 120, maxRP: 130, desc: "四周跳宗师" },
+      { name: "Grandmaster", minRP: 140, maxRP: 140, desc: "超级专家" },
+      { name: "Trusova Legend", minRP: 150, maxRP: 150, desc: "特鲁索娃传奇（满分专属）" }
+    ];
+
+    function getRank(rp) {
+      if (rp >= 150) return RANKS[7];
+      if (rp >= 140) return RANKS[6];
+      if (rp >= 120) return RANKS[5];
+      if (rp >= 100) return RANKS[4];
+      if (rp >= 80) return RANKS[3];
+      if (rp >= 60) return RANKS[2];
+      if (rp >= 40) return RANKS[1];
+      return RANKS[0];
+    }
+
+    function App() {
+      const [page, setPage] = useState('home');
+      const [idx, setIdx] = useState(0);
+      const [selected, setSelected] = useState(null);
+      const [submitted, setSubmitted] = useState(false);
+      const [score, setScore] = useState(0);
+      const [userAnswers, setUserAnswers] = useState([]);
+
+      const startQuiz = () => {
+        setIdx(0);
+        setSelected(null);
+        setSubmitted(false);
+        setScore(0);
+        setUserAnswers([]);
+        setPage('quiz');
+      };
+
+      const handleSubmit = () => {
+        if (selected === null || submitted) return;
+        setSubmitted(true);
+        if (selected === QUESTIONS[idx].correctAnswer) {
+          setScore(s => s + 10);
+        }
+        setUserAnswers([...userAnswers, selected]);
+      };
+
+      const handleNext = () => {
+        if (idx < QUESTIONS.length - 1) {
+          setIdx(i => i + 1);
+          setSelected(null);
+          setSubmitted(false);
+        } else {
+          setPage('results');
+        }
+      };
+
+      const currentQ = QUESTIONS[idx];
+      const rank = getRank(score);
+
+      return (
+        <div className="max-w-xl mx-auto px-4 py-8">
+          <header className="flex justify-between items-center mb-8 border-b border-slate-800 pb-4">
+            <h1 className="text-xl font-bold text-cyan-400 cursor-pointer" onClick={() => setPage('home')}>SASHA RANKED</h1>
+            <div className="text-xs text-slate-400">Original Website Creator: Blue</div>
+          </header>
+
+          {page === 'home' && (
+            <div className="text-center space-y-6">
+              <h2 className="text-3xl font-extrabold text-cyan-200">THE ULTIMATE TRUSOVA FAN CHALLENGE</h2>
+              <p className="text-slate-400 text-sm">测试你对“四周跳女王”特鲁索娃的了解程度！共 15 题，满分 150 RP。</p>
+              <button onClick={startQuiz} className="w-full py-4 bg-cyan-500 text-slate-950 font-bold rounded-xl shadow-lg">开始挑战</button>
+            </div>
+          )}
+
+          {page === 'quiz' && (
+            <div className="space-y-6">
+              <div className="flex justify-between text-sm text-slate-400">
+                <span>题目 {idx + 1} / 15</span>
+                <span>当前得分: {score} RP</span>
+              </div>
+              <div className="p-6 bg-slate-900 rounded-2xl border border-slate-800 space-y-4">
+                <h3 className="text-lg font-bold">{currentQ.question}</h3>
+                <div className="space-y-2">
+                  {currentQ.options.map((opt, i) => (
+                    <button
+                      key={i}
+                      disabled={submitted}
+                      onClick={() => setSelected(i)}
+                      className={`w-full p-3 rounded-lg text-left text-sm font-medium border ${selected === i ? 'border-cyan-400 bg-cyan-950/40' : 'border-slate-800 bg-slate-950'}`}
+                    >
+                      {String.fromCharCode(65 + i)}. {opt}
+                    </button>
+                  ))}
+                </div>
+                {!submitted ? (
+                  <button disabled={selected === null} onClick={handleSubmit} className="w-full py-3 bg-cyan-500 text-slate-950 font-bold rounded-xl disabled:bg-slate-800">提交答案</button>
+                ) : (
+                  <button onClick={handleNext} className="w-full py-3 bg-blue-600 text-white font-bold rounded-xl">下一题</button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {page === 'results' && (
+            <div className="text-center space-y-6">
+              <h2 className="text-2xl font-bold">挑战完成！</h2>
+              <div className="p-6 bg-slate-900 rounded-2xl border border-slate-800 space-y-3">
+                <div className="text-4xl font-extrabold text-cyan-400">{score} RP</div>
+                <div className="text-lg font-bold text-amber-300">获得段位: {rank.name}</div>
+                <p className="text-xs text-slate-400">{rank.desc}</p>
+              </div>
+              <button onClick={startQuiz} className="w-full py-3 bg-cyan-500 text-slate-950 font-bold rounded-xl">重新挑战</button>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
